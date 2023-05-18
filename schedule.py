@@ -11,9 +11,9 @@ def update_groups(data):
         file.write(json.dumps(data))
 
 
-def search_obj(obj_list: list, id_name: str, id: str) -> int:
+def search_obj(obj_list: list, id: str) -> int:
     for i in range(len(obj_list)):
-        if obj_list[i][id_name] == id:
+        if obj_list[i]['group_id'] == id:
             return i
     return -1
 
@@ -47,19 +47,20 @@ def get_schedule_by_group(group: str):
     return {
         'group_id': group,
         'last_update': int(time.time() / 86400),
-        'Monday': mas[0],
-        'Tuesday': mas[1],
-        'Wednesday': mas[2],
-        'Thursday': mas[3],
-        'Friday': mas[4],
-        'Saturday': mas[5]
+        '1': mas[0],
+        '2': mas[1],
+        '3': mas[2],
+        '4': mas[3],
+        '5': mas[4],
+        '6': mas[5]
     }
 
 
 with open('data/groups.json', 'r') as file:
     groups = json.loads(file.read())
 group_id = sys.argv[1]
-group_index = search_obj(groups['groups'], 'group_id', group_id)
+print("group_id: {}\n".format(group_id))
+group_index = search_obj(groups['groups'], group_id)
 
 if group_index != -1 and ((int(time.time() / 86400) - int(groups['groups'][group_index]["last_update"])) == 0):
     exit()
@@ -67,6 +68,10 @@ if group_index != -1 and ((int(time.time() / 86400) - int(groups['groups'][group
 with open('data/update_state', 'w') as file:
     file.write('1')
 schedule = get_schedule_by_group(group_id)
+if schedule is None:
+    with open('data/update_state', 'w') as file:
+        file.write('-1')
+    exit()
 with open('data/update_state', 'w') as file:
     file.write('0')
 if group_index == -1:
