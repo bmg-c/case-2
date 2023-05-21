@@ -322,7 +322,14 @@ def get_request(request: Data):
                                      ['choose_day', users['users']
                                       [user['index']]['group_id']])
                 update_group(users['users'][user['index']]['group_id'])
-                sleep(3)
+                sleep(0.75)
+                with open('data/update_state', 'r') as state:
+                    if state.read() == '-1':
+                        text = WRONG_COMMAND + CHOOSE_DAY
+                        tts = WRONG_COMMAND_TTS + CHOOSE_DAY_TTS
+                        with open('data/update_state', 'w') as state:
+                            state.write('0')
+                sleep(2.25)
         elif user['command'] == 'расписание':
             text = WHICH_SPECIFIC_GROUP
             change_session_state(users, user['index'],
@@ -410,10 +417,17 @@ def get_request(request: Data):
         group_id = user['text']
 
         update_group(group_id)
-        sleep(3)
-
-        change_session_state(users, user['index'],
-                             ['choose_day', group_id])
+        sleep(0.75)
+        with open('data/update_state', 'r') as state:
+            if state.read() == '-1':
+                text = WRONG_GROUP
+                tts = WRONG_GROUP_TTS
+                with open('data/update_state', 'w') as state:
+                    state.write('0')
+            else:
+                sleep(2.25)
+                change_session_state(users, user['index'],
+                                     ['choose_day', group_id])
 
     if tts == '':
         tts = text
