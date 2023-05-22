@@ -20,7 +20,7 @@ def search_obj(obj_list: list, id: str) -> int:
 
 def get_schedule_by_group(group: str):
     facult = ['yuf', 'rtf', 'rkf', 'fet', 'fsu', 'fvs', 'gf', 'fb', 'ef']
-    if type(group[0]) != int:
+    if not group[0].isdigit():
         return None
     response = requests.get(
         f'https://timetable.tusur.ru/faculties/{facult[int(group[0])]}/groups/{group}')
